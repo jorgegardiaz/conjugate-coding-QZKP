@@ -12,7 +12,7 @@ This repository contains an implementation of a **zero knowledge** cryptographic
   - [2. QZKP_attack_ideal.py](#2-qzkp_idealpy)
   - [3. QZKP_noise_damping.py](#3-qzkp_noise_dampingpy)
   - [4. QZKP_noise_flip.py](#4-qzkp_noise_flippy)
-- [Graphical User Interface (GUI)](#GUI)
+- [Graphical User Interface](#graphical-user-interface)
 - [Contributions](#contributions)
 - [License](#license)
 
@@ -111,7 +111,7 @@ python QZKP_noise_flip.py <key_length> <num_iterations> <pbit> <pphase> <attacke
 Similar data output to the other scripts, generating CSVs with per-iteration metrics.
 
 ---
-# Graphical User Interface (GUI)
+## Graphical User Interface
 
 This project includes a user-friendly graphical interface built with wxPython that acts as a launcher and visualizer for all the simulation scripts.
 
@@ -133,9 +133,7 @@ The GUI provides a centralized and interactive way to run the simulations:
 - **Results Visualization:** For iterative simulations, a scatter plot is automatically generated upon completion, showing the success rate per iteration and distinguishing between honest and dishonest runs.
 
 - **Data and Plot Export:** A dedicated "Save" section appears for iterative simulations, allowing you to:
-
    - Save the plot in various formats, including PNG, PDF, and SVG.
-
    - Save the raw simulation data to CSV, JSON, or Excel (.xlsx) files for further analysis.
 
 - **Console Output:** For the "Basic Protocol", the output view automatically switches to a text console to display the detailed step-by-step verbose output, which can also be saved to a `.txt` file.
