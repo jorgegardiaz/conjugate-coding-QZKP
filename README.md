@@ -12,6 +12,7 @@ This repository contains an implementation of a **zero knowledge** cryptographic
   - [2. QZKP_attack_ideal.py](#2-qzkp_idealpy)
   - [3. QZKP_noise_damping.py](#3-qzkp_noise_dampingpy)
   - [4. QZKP_noise_flip.py](#4-qzkp_noise_flippy)
+- [Graphical User Interface](#GUI)
 - [Contributions](#contributions)
 - [License](#license)
 
@@ -35,6 +36,7 @@ The repository includes different scripts that illustrate various versions of th
 ├── README.md
 ├── requirements.txt
 ├── src
+│   ├── QZKP_GUI.py
 │   ├── QZKP_barebones.py
 │   ├── QZKP_attack_ideal.py
 │   ├── QZKP_noise_damping.py
@@ -49,8 +51,10 @@ The repository includes different scripts that illustrate various versions of th
 - [matplotlib](https://matplotlib.org/)
 - [pandas](https://pandas.pydata.org/)
 - [numpy](https://numpy.org/)
+- [wxPython](https://wxpython.org/)
+- [openpyxl](https://openpyxl.readthedocs.io/en/stable/)
 
-All dependencies are (or can be) listed in the `requirements.txt` file.
+All dependencies are listed in the `requirements.txt` file with their corresponding compatible version.
 
 ---
 
@@ -106,6 +110,35 @@ python QZKP_noise_flip.py <key_length> <num_iterations> <pbit> <pphase> <attacke
 ```
 Similar data output to the other scripts, generating CSVs with per-iteration metrics.
 
+---
+# Graphical User Interface (GUI)
+
+This project includes a user-friendly graphical interface built with wxPython that acts as a launcher and visualizer for all the simulation scripts.
+
+### How to Run
+To start the application, run the `QZKP_GUI.py` script from the root directory of the project:
+```bash
+python src/QZKP_GUI.py
+```
+
+### Features
+The GUI provides a centralized and interactive way to run the simulations:
+
+- **Simulation Selection:** A dropdown menu allows you to choose which of the four protocols to run.
+
+- **Interactive Parameters:** The interface dynamically displays the necessary parameters for the selected script (key length, iterations, noise levels, etc.), which can be adjusted easily.
+
+- **Real-time Progress:** For long-running simulations, a progress bar, a percentage counter, and an elapsed time stopwatch provide real-time feedback on the execution status.
+
+- **Results Visualization:** For iterative simulations, a scatter plot is automatically generated upon completion, showing the success rate per iteration and distinguishing between honest and dishonest runs.
+
+- **Data and Plot Export:** A dedicated "Save" section appears for iterative simulations, allowing you to:
+
+   - Save the plot in various formats, including PNG, PDF, and SVG.
+
+   - Save the raw simulation data to CSV, JSON, or Excel (.xlsx) files for further analysis.
+
+- **Console Output:** For the "Basic Protocol", the output view automatically switches to a text console to display the detailed step-by-step verbose output, which can also be saved to a `.txt` file.
 ---
 
 ## Contributions
