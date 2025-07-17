@@ -130,22 +130,22 @@ if __name__ == '__main__':
         print(f'Secret basis ---> b = {b}\n')
         secret_state =  [a_val if b_val == 0 else ('+' if a_val == 0 else '-') for a_val, b_val in zip(a, b)]
         print(f'Coded secret state ---> {tuple(secret_state)}\n')
-        input()
+        
         
         print(f'--- Challenge Generation ---')
         challenge_state = [s_val if c_val == 0 else ({0: 1, 1: 0, '+': '-', '-': '+'}[s_val]) for s_val, c_val in zip(secret_state, c)]
         print(f'Random challenge sequence ---> c = {c}')
         print(f'Challenge state ---> {tuple(challenge_state)}')
-        input()
+        
 
-        print('\n--- Bob sends challenge State through Quantum Channel to Alice --- \n\n')
+        print('\n\n--- Bob sends challenge State through Quantum Channel to Alice --- \n\n')
 
         print('--- Alice\'s Modifications and Proof State Generation ---')
         proof_state =  [a_val if b_val == 0 else ('+' if a_val == 0 else '-') for a_val, b_val in zip(b_xor_c, a)]
         print(f'Proof state ---> {tuple(proof_state)}')
-        input()
+        
 
-        print('\n--- Alice sends the proof state to Bob ---\n')
+        print('\n\n--- Alice sends the proof state to Bob ---\n\n')
 
         print('--- Bob recovers c ---')
         print(f'Measurement results ---> {tuple(b_xor_c)}')

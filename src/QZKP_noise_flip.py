@@ -163,7 +163,7 @@ if __name__=='__main__':
     pbit = float(sys.argv[3])  # Probability for bit-flip
     pphase = float(sys.argv[4])  # Probability for phase-flip
     sim = AerSimulator()
-    attack = True
+    attack = bool(sys.argv[5])
     percentages = []
 
     start_time = time.time()

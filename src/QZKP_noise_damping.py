@@ -135,7 +135,7 @@ if __name__=='__main__':
     num_iter = int(sys.argv[2])
     gamma = float(sys.argv[3]) # Probabilidad of amplitude damping
     lam = float(sys.argv[4]) # Probability of phase damping
-    attack = True
+    attack = bool(sys.argv[5])
     
     
     noise_model = NoiseModel()
