@@ -12,7 +12,7 @@ This repository contains an implementation of a **zero knowledge** cryptographic
   - [2. QZKP_attack_ideal.py](#2-qzkp_idealpy)
   - [3. QZKP_noise_damping.py](#3-qzkp_noise_dampingpy)
   - [4. QZKP_noise_flip.py](#4-qzkp_noise_flippy)
-- [Graphical User Interface](#GUI)
+- [Graphical User Interface (GUI)](#GUI)
 - [Contributions](#contributions)
 - [License](#license)
 
