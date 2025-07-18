@@ -10,6 +10,7 @@ import re
 import os
 import sys
 import time
+import numpy as np
 
 class MainFrame(wx.Frame):
     """
@@ -121,8 +122,6 @@ class MainFrame(wx.Frame):
         
     def _build_panel_basic(self, parent):
         panel = wx.Panel(parent)
-        sizer = wx.BoxSizer(wx.VERTICAL)
-        # Se eliminó la CheckBox de modo verboso
         sizer, controls = self._build_common_controls(panel, show_iter=False)
         panel.SetSizer(sizer)
         return panel, controls
@@ -235,28 +234,36 @@ class MainFrame(wx.Frame):
     def _create_plot_page(self, parent):
         plot_panel = wx.Panel(parent)
         sizer = wx.BoxSizer(wx.VERTICAL)
+        
+        plot_selector_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.plot_type_choice = wx.RadioBox(plot_panel, label="Plot Type", choices=["Scatter Plot", "Bar Chart"])
+        plot_selector_sizer.Add(self.plot_type_choice, 0, wx.ALIGN_CENTER_VERTICAL)
+        sizer.Add(plot_selector_sizer, 0, wx.ALL | wx.ALIGN_LEFT, 5)
+
         self.fig = Figure()
         self.ax = self.fig.add_subplot(111)
         self.canvas = FigureCanvas(plot_panel, -1, self.fig)
         sizer.Add(self.canvas, 1, wx.EXPAND)
+        
         plot_panel.SetSizer(sizer)
+        self.Bind(wx.EVT_RADIOBOX, self.on_plot_type_change, self.plot_type_choice)
         return plot_panel
 
     def _create_console_page(self, parent):
         console_panel = wx.Panel(parent)
         sizer = wx.BoxSizer(wx.VERTICAL)
-        
         self.console_output = wx.TextCtrl(console_panel, style=wx.TE_MULTILINE | wx.TE_READONLY | wx.TE_RICH2)
         sizer.Add(self.console_output, 1, wx.EXPAND)
-        
-        # --- NUEVO: Botón para guardar el log de la consola ---
         save_log_button = wx.Button(console_panel, label="Save Log to .txt...")
         sizer.Add(save_log_button, 0, wx.ALL | wx.ALIGN_RIGHT, 5)
         self.Bind(wx.EVT_BUTTON, self.on_save_console, save_log_button)
-
         console_panel.SetSizer(sizer)
         self.console_output.AppendText("Welcome to the Quantum Simulator.\nSelect a script and press 'Run'.\n")
         return console_panel
+
+    def on_plot_type_change(self, event):
+        if self.latest_results_file:
+            self.plot_data(self.latest_results_file)
 
     def on_save_plot(self, event):
         selection = self.plot_format_choice.GetStringSelection()
@@ -296,7 +303,6 @@ class MainFrame(wx.Frame):
                 wx.MessageBox(f"Could not save data to '{pathname}'.\nError: {e}", "Error", wx.OK | wx.ICON_ERROR)
     
     def on_save_console(self, event):
-        """Guarda el contenido de la consola de texto en un archivo .txt."""
         with wx.FileDialog(self, "Save console log as...", wildcard="Text files (*.txt)|*.txt", style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT) as fileDialog:
             if fileDialog.ShowModal() == wx.ID_CANCEL: return
             pathname = fileDialog.GetPath()
@@ -357,7 +363,6 @@ class MainFrame(wx.Frame):
                     command.append(f"{active_controls['pbit'].GetValue() / 100:.4f}")
                     command.append(f"{active_controls['pphase'].GetValue() / 100:.4f}")
                     command.append(str(active_controls['attacker'].GetValue()))
-            # --- CAMBIO: El modo verboso ahora está hardcodeado ---
             elif "Basic" in script_name:
                 command.append("v")
         except (ValueError, KeyError) as e:
@@ -426,21 +431,50 @@ class MainFrame(wx.Frame):
     def plot_data(self, csv_file):
         df = pd.read_csv(csv_file)
         self.ax.clear()
-        if 'Decision' in df.columns:
-            honest_df = df[df['Decision'] == 0]
-            dishonest_df = df[df['Decision'] == 1]
-            self.ax.scatter(honest_df['Iteration'], honest_df['Percentages'], label='Honest (Dec=0)', color='#3498db', marker='o', alpha=0.8, s=20)
-            self.ax.scatter(dishonest_df['Iteration'], dishonest_df['Percentages'], label='Dishonest (Dec=1)', color='#e74c3c', marker='x', alpha=0.8, s=20)
-            self.ax.legend()
-        else:
-             self.ax.scatter(df['Iteration'], df['Percentages'], label='Results', color='#3498db', marker='o', alpha=0.8, s=20)
-        self.ax.set_title('Success Rate per Iteration')
-        self.ax.set_xlabel('Iteration')
-        self.ax.set_ylabel('Success Rate (%)')
+
+        plot_type = self.plot_type_choice.GetStringSelection()
+
+        if plot_type == "Scatter Plot":
+            if 'Decision' in df.columns:
+                honest_df = df[df['Decision'] == 0]
+                dishonest_df = df[df['Decision'] == 1]
+                self.ax.scatter(honest_df['Iteration'], honest_df['Percentages'], label='Honest (Dec=0)', color='#3498db', marker='o', alpha=0.8, s=20)
+                self.ax.scatter(dishonest_df['Iteration'], dishonest_df['Percentages'], label='Dishonest (Dec=1)', color='#e74c3c', marker='x', alpha=0.8, s=20)
+                self.ax.legend()
+            else:
+                 self.ax.scatter(df['Iteration'], df['Percentages'], label='Results', color='#3498db', marker='o', alpha=0.8, s=20)
+            self.ax.set_title('Success Rate per Iteration')
+            self.ax.set_xlabel('Iteration')
+            self.ax.set_ylabel('Success Rate (%)')
+            min_y = max(0, df['Percentages'].min() - 10)
+            max_y = min(100, df['Percentages'].max() + 10)
+            self.ax.set_ylim(min_y, max_y)
+
+        elif plot_type == "Bar Chart":
+            if 'Decision' in df.columns:
+                honest_data = df[df['Decision'] == 0]['Percentages']
+                dishonest_data = df[df['Decision'] == 1]['Percentages']
+                
+                honest_counts = honest_data.value_counts()
+                dishonest_counts = dishonest_data.value_counts()
+
+                all_percs = sorted(list(set(honest_counts.index) | set(dishonest_counts.index)))
+                
+                honest_heights = [honest_counts.get(p, 0) for p in all_percs]
+                dishonest_heights = [dishonest_counts.get(p, 0) for p in all_percs]
+
+                self.ax.bar(all_percs, honest_heights, color='#3498db', label='Honest', width=0.4)
+                self.ax.bar(all_percs, dishonest_heights, bottom=honest_heights, color='#e74c3c', label='Dishonest', width=0.4)
+
+                self.ax.legend()
+            else:
+                counts = df['Percentages'].value_counts()
+                self.ax.bar(counts.index, counts.values, color='#3498db', width=0.4)
+            self.ax.set_title('Frequency of Success Rates')
+            self.ax.set_xlabel('Success Rate (%)')
+            self.ax.set_ylabel('Frequency')
+
         self.ax.grid(True, linestyle='--', alpha=0.6)
-        min_y = max(0, df['Percentages'].min() - 10)
-        max_y = min(100, df['Percentages'].max() + 10)
-        self.ax.set_ylim(min_y, max_y)
         self.canvas.draw()
 
 if __name__ == "__main__":
@@ -449,10 +483,11 @@ if __name__ == "__main__":
         import pandas
         import matplotlib
         import openpyxl 
+        import numpy
     except ImportError:
         print("Error: One or more dependencies are missing.")
         print("Please install the required libraries by running:")
-        print("pip install wxPython pandas matplotlib openpyxl")
+        print("pip install wxPython pandas matplotlib openpyxl numpy")
         sys.exit()
 
     app = wx.App(False)
