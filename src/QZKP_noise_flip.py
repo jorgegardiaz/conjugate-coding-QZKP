@@ -94,7 +94,7 @@ def alice_mod(psi, a, b):
 
 def measurements(psi, b):
     '''
-    Alice measures using the secret b.
+    Meassurements using the secret b.
     '''
     if len(psi) != len(b):
         raise ValueError('Same number of qubits and b expected.')
