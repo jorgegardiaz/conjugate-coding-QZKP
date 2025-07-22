@@ -74,14 +74,6 @@ def measurements(psi, basis):
         results.append(result)
     return results
 
-def c_aprox_gen(results, d, w):
-    c_aprox = []
-    for i, bit in enumerate(results):
-        # if bit == w[i] gamma[i]; else !gamma[i]
-        decission = int(d[i] ^ (bit != w[i]))
-        c_aprox.append(decission)
-    return c_aprox
-
 def equal_entries_percentage(list1, list2):
     if len(list1) != len(list2):
         raise ValueError("The lists must have the same length.")

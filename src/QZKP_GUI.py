@@ -442,7 +442,7 @@ class MainFrame(wx.Frame):
                 self.ax.scatter(dishonest_df['Iteration'], dishonest_df['Percentages'], label='Dishonest (Dec=1)', color='#e74c3c', marker='x', alpha=0.8, s=20)
                 self.ax.legend()
             else:
-                 self.ax.scatter(df['Iteration'], df['Percentages'], label='Results', color='#3498db', marker='o', alpha=0.8, s=20)
+                 self.ax.scatter(df['Iteration'], df['Percentages'], label='Results', color='#e74c3c', marker='o', alpha=0.8, s=20)
             self.ax.set_title('Success Rate per Iteration')
             self.ax.set_xlabel('Iteration')
             self.ax.set_ylabel('Success Rate (%)')
@@ -462,14 +462,14 @@ class MainFrame(wx.Frame):
                 
                 honest_heights = [honest_counts.get(p, 0) for p in all_percs]
                 dishonest_heights = [dishonest_counts.get(p, 0) for p in all_percs]
-
+                 
                 self.ax.bar(all_percs, honest_heights, color='#3498db', label='Honest', width=0.4)
                 self.ax.bar(all_percs, dishonest_heights, bottom=honest_heights, color='#e74c3c', label='Dishonest', width=0.4)
 
                 self.ax.legend()
             else:
                 counts = df['Percentages'].value_counts()
-                self.ax.bar(counts.index, counts.values, color='#3498db', width=0.4)
+                self.ax.bar(counts.index, counts.values, color='#e74c3c', width=0.4)
             self.ax.set_title('Frequency of Success Rates')
             self.ax.set_xlabel('Success Rate (%)')
             self.ax.set_ylabel('Frequency')

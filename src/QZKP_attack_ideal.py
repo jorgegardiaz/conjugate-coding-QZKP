@@ -83,17 +83,6 @@ def measurements(psi, b):
         results.append(result)
     return results
 
-def c_aprox_gen(results, p, a):
-    '''
-    Generation of the approximation c' for c.
-    '''
-    c_aprox = []
-    for i, bit in enumerate(results):
-        # if bit == a[i] gamma[i]; else !gamma[i]
-        decission = int(p[i] ^ (bit != a[i]))
-        c_aprox.append(decission)
-    return c_aprox
-
 def equal_entries_percentage(list1, list2):
     '''
     Percentage of equal entries.
